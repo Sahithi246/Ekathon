@@ -13,6 +13,10 @@ struct HackathonAppApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
+            CognitiveScore.self,
+            ReactionTimeResult.self,
+            SleepData.self,
+            VoiceMetrics.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -25,7 +29,7 @@ struct HackathonAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            DashboardView()
         }
         .modelContainer(sharedModelContainer)
     }
