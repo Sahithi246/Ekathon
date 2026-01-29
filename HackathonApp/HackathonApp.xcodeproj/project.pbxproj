@@ -6,6 +6,16 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		9E7EC0EC2F2B71EF0079A0C2 /* CareKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0EB2F2B71EF0079A0C2 /* CareKit */; };
+		9E7EC0EE2F2B71EF0079A0C2 /* CareKitStore in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0ED2F2B71EF0079A0C2 /* CareKitStore */; };
+		9E7EC0F02F2B71EF0079A0C2 /* CareKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0EF2F2B71EF0079A0C2 /* CareKitUI */; };
+		9E7EC0F32F2B74100079A0C2 /* ResearchKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0F22F2B74100079A0C2 /* ResearchKit */; };
+		9E7EC0F52F2B74100079A0C2 /* ResearchKitActiveTask in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0F42F2B74100079A0C2 /* ResearchKitActiveTask */; };
+		9E7EC0F72F2B74100079A0C2 /* ResearchKitSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0F62F2B74100079A0C2 /* ResearchKitSwiftUI */; };
+		9E7EC0F92F2B74100079A0C2 /* ResearchKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0F82F2B74100079A0C2 /* ResearchKitUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		9E7EC0D72F2B6BB30079A0C2 /* HackathonApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HackathonApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +33,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E7EC0F72F2B74100079A0C2 /* ResearchKitSwiftUI in Frameworks */,
+				9E7EC0F52F2B74100079A0C2 /* ResearchKitActiveTask in Frameworks */,
+				9E7EC0F92F2B74100079A0C2 /* ResearchKitUI in Frameworks */,
+				9E7EC0F32F2B74100079A0C2 /* ResearchKit in Frameworks */,
+				9E7EC0EE2F2B71EF0079A0C2 /* CareKitStore in Frameworks */,
+				9E7EC0EC2F2B71EF0079A0C2 /* CareKit in Frameworks */,
+				9E7EC0F02F2B71EF0079A0C2 /* CareKitUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +82,13 @@
 			);
 			name = HackathonApp;
 			packageProductDependencies = (
+				9E7EC0EB2F2B71EF0079A0C2 /* CareKit */,
+				9E7EC0ED2F2B71EF0079A0C2 /* CareKitStore */,
+				9E7EC0EF2F2B71EF0079A0C2 /* CareKitUI */,
+				9E7EC0F22F2B74100079A0C2 /* ResearchKit */,
+				9E7EC0F42F2B74100079A0C2 /* ResearchKitActiveTask */,
+				9E7EC0F62F2B74100079A0C2 /* ResearchKitSwiftUI */,
+				9E7EC0F82F2B74100079A0C2 /* ResearchKitUI */,
 			);
 			productName = HackathonApp;
 			productReference = 9E7EC0D72F2B6BB30079A0C2 /* HackathonApp.app */;
@@ -94,6 +118,10 @@
 			);
 			mainGroup = 9E7EC0CE2F2B6BB30079A0C2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9E7EC0EA2F2B71EF0079A0C2 /* XCRemoteSwiftPackageReference "CareKit" */,
+				9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9E7EC0D82F2B6BB30079A0C2 /* Products */;
 			projectDirPath = "";
@@ -251,6 +279,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HackathonApp/HackathonApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MM7ZJ7865Z;
@@ -283,6 +312,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HackathonApp/HackathonApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MM7ZJ7865Z;
@@ -332,6 +362,63 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		9E7EC0EA2F2B71EF0079A0C2 /* XCRemoteSwiftPackageReference "CareKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/carekit-apple/CareKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/StanfordBDHG/ResearchKit";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9E7EC0EB2F2B71EF0079A0C2 /* CareKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC0EA2F2B71EF0079A0C2 /* XCRemoteSwiftPackageReference "CareKit" */;
+			productName = CareKit;
+		};
+		9E7EC0ED2F2B71EF0079A0C2 /* CareKitStore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC0EA2F2B71EF0079A0C2 /* XCRemoteSwiftPackageReference "CareKit" */;
+			productName = CareKitStore;
+		};
+		9E7EC0EF2F2B71EF0079A0C2 /* CareKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC0EA2F2B71EF0079A0C2 /* XCRemoteSwiftPackageReference "CareKit" */;
+			productName = CareKitUI;
+		};
+		9E7EC0F22F2B74100079A0C2 /* ResearchKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */;
+			productName = ResearchKit;
+		};
+		9E7EC0F42F2B74100079A0C2 /* ResearchKitActiveTask */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */;
+			productName = ResearchKitActiveTask;
+		};
+		9E7EC0F62F2B74100079A0C2 /* ResearchKitSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */;
+			productName = ResearchKitSwiftUI;
+		};
+		9E7EC0F82F2B74100079A0C2 /* ResearchKitUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */;
+			productName = ResearchKitUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 9E7EC0CF2F2B6BB30079A0C2 /* Project object */;
 }

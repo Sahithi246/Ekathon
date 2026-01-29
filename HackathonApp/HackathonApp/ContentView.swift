@@ -7,6 +7,10 @@
 
 import SwiftUI
 import SwiftData
+import ResearchKit
+import CareKit
+import CareKitUI
+import ResearchKitUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
