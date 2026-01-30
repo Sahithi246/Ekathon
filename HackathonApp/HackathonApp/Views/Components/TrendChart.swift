@@ -115,18 +115,3 @@ extension TrendDirection {
     }
 }
 
-#Preview {
-    let mockScores = (0..<7).map { day in
-        CognitiveScore(
-            timestamp: Calendar.current.date(byAdding: .day, value: -day, to: Date()) ?? Date(),
-            overallScore: Double.random(in: 60...90),
-            reactionTimeScore: 80,
-            sleepScore: 75,
-            voiceScore: 70
-        )
-    }.reversed()
-    
-    return TrendChart(scores: Array(mockScores))
-        .padding()
-        .background(Color(.systemGroupedBackground))
-}

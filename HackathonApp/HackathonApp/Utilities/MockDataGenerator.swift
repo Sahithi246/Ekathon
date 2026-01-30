@@ -52,34 +52,34 @@ class MockDataGenerator {
             )
             modelContext.insert(sleepData)
             
-            // Generate voice metrics (improving speech patterns)
-            let baseWPM = 135.0
-            let wpmImprovement = 15.0
-            let wordsPerMinute = baseWPM + (trendFactor * wpmImprovement) + Double.random(in: -10...10)
+            // Generate photo recognition result (improving recognition over time)
+            let baseAccuracy = 0.6
+            let accuracyImprovement = 0.25
+            let accuracy = baseAccuracy + (trendFactor * accuracyImprovement) + Double.random(in: -0.1...0.1)
+            let totalPhotos = 5
+            let correctAnswers = Int(round(accuracy * Double(totalPhotos)))
             
-            let basePause = 0.6
-            let pauseImprovement = 0.2
-            let averagePause = basePause - (trendFactor * pauseImprovement) + Double.random(in: -0.1...0.1)
+            let baseResponseTime = 4.5
+            let responseTimeImprovement = 1.0
+            let avgResponseTime = baseResponseTime - (trendFactor * responseTimeImprovement) + Double.random(in: -0.5...0.5)
             
-            let baseVariability = 0.28
-            let variabilityImprovement = 0.08
-            let speechVariability = baseVariability - (trendFactor * variabilityImprovement) + Double.random(in: -0.05...0.05)
-            
-            let voiceMetrics = VoiceMetrics(
+            let photoRecognition = PhotoRecognitionResult(
                 timestamp: date,
-                wordsPerMinute: max(100, min(180, wordsPerMinute)),
-                averagePauseDuration: max(0.2, min(1.2, averagePause)),
-                speechVariability: max(0.1, min(0.5, speechVariability)),
-                totalWords: Int((wordsPerMinute * 60.0) / 60.0),
-                recordingDuration: Double.random(in: 45...75)
+                totalPhotos: totalPhotos,
+                correctAnswers: max(0, min(totalPhotos, correctAnswers)),
+                incorrectAnswers: totalPhotos - max(0, min(totalPhotos, correctAnswers)),
+                averageResponseTime: max(2.0, min(6.0, avgResponseTime)),
+                individualResponseTimes: (0..<totalPhotos).map { _ in 
+                    max(2.0, min(6.0, avgResponseTime + Double.random(in: -0.8...0.8)))
+                }
             )
-            modelContext.insert(voiceMetrics)
+            modelContext.insert(photoRecognition)
             
             // Calculate and save cognitive score
             let score = CognitiveScoreService.calculateFromModels(
                 reactionTime: reactionResult,
                 sleep: sleepData,
-                voice: voiceMetrics
+                photoRecognition: photoRecognition
             )
             score.timestamp = date
             modelContext.insert(score)

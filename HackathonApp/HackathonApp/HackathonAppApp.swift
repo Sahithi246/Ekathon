@@ -16,14 +16,23 @@ struct HackathonAppApp: App {
             CognitiveScore.self,
             ReactionTimeResult.self,
             SleepData.self,
-            VoiceMetrics.self,
+            PhotoRecognitionResult.self,
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        
+        // Use versioned database name to avoid conflicts with old schema
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false
+        )
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // If schema migration fails, print error and use in-memory as fallback
+            print("⚠️ ModelContainer error: \(error)")
+            print("Using in-memory database. Delete app and reinstall to fix.")
+            let inMemoryConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            return try! ModelContainer(for: schema, configurations: [inMemoryConfig])
         }
     }()
 

@@ -12,22 +12,22 @@ import SwiftData
 class CognitiveScoreService {
     
     /// Calculate unified cognitive risk score
-    /// Formula: Reaction Time (45%) + Sleep (25%) + Voice (30%)
+    /// Formula: Reaction Time (50%) + Sleep (30%) + Photo Recognition (20%)
     /// 
     /// - Parameters:
     ///   - reactionTimeScore: Score from reaction time test (0-100)
     ///   - sleepScore: Score from sleep data (0-100)
-    ///   - voiceScore: Score from voice metrics (0-100)
+    ///   - photoRecognitionScore: Score from photo recognition game (0-100)
     /// - Returns: Unified cognitive risk score (0-100, where 0 = highest risk)
     static func calculateUnifiedScore(
         reactionTimeScore: Double,
         sleepScore: Double,
-        voiceScore: Double
+        photoRecognitionScore: Double
     ) -> Double {
-        // Weighted formula as specified
-        let weightedScore = (reactionTimeScore * 0.45) + 
-                           (sleepScore * 0.25) + 
-                           (voiceScore * 0.30)
+        // Weighted formula: Reaction Time (50%), Sleep (30%), Photo Recognition (20%)
+        let weightedScore = (reactionTimeScore * 0.50) + 
+                           (sleepScore * 0.30) + 
+                           (photoRecognitionScore * 0.20)
         
         // Ensure score is within bounds
         return max(0, min(100, weightedScore))
@@ -37,16 +37,16 @@ class CognitiveScoreService {
     static func calculateFromModels(
         reactionTime: ReactionTimeResult?,
         sleep: SleepData?,
-        voice: VoiceMetrics?
+        photoRecognition: PhotoRecognitionResult?
     ) -> CognitiveScore {
         let reactionScore = reactionTime?.cognitiveScore ?? 50.0 // Default if missing
         let sleepScoreValue = sleep?.cognitiveScore ?? 50.0
-        let voiceScoreValue = voice?.cognitiveScore ?? 50.0
+        let photoRecognitionScoreValue = photoRecognition?.cognitiveScore ?? 50.0
         
         let overallScore = calculateUnifiedScore(
             reactionTimeScore: reactionScore,
             sleepScore: sleepScoreValue,
-            voiceScore: voiceScoreValue
+            photoRecognitionScore: photoRecognitionScoreValue
         )
         
         return CognitiveScore(
@@ -54,10 +54,10 @@ class CognitiveScoreService {
             overallScore: overallScore,
             reactionTimeScore: reactionScore,
             sleepScore: sleepScoreValue,
-            voiceScore: voiceScoreValue,
+            photoRecognitionScore: photoRecognitionScoreValue,
             reactionTimeStatus: reactionTime?.status ?? "stable",
             sleepStatus: sleep?.status ?? "stable",
-            voiceStatus: voice?.status ?? "stable"
+            photoRecognitionStatus: photoRecognition?.status ?? "stable"
         )
     }
     

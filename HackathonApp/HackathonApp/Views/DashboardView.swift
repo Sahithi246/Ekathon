@@ -13,7 +13,7 @@ struct DashboardView: View {
     @Query(sort: \CognitiveScore.timestamp, order: .reverse) private var allScores: [CognitiveScore]
     @Query(sort: \ReactionTimeResult.timestamp, order: .reverse) private var reactionResults: [ReactionTimeResult]
     @Query(sort: \SleepData.date, order: .reverse) private var sleepData: [SleepData]
-    @Query(sort: \VoiceMetrics.timestamp, order: .reverse) private var voiceMetrics: [VoiceMetrics]
+    @Query(sort: \PhotoRecognitionResult.timestamp, order: .reverse) private var photoRecognitionResults: [PhotoRecognitionResult]
     
     @State private var currentScore: CognitiveScore?
     @State private var isLoading = false
@@ -65,10 +65,10 @@ struct DashboardView: View {
                             .transition(.move(edge: .leading).combined(with: .opacity))
                             
                             SignalIndicator(
-                                title: "Speech Variability",
-                                status: score.voiceStatus,
-                                score: score.voiceScore,
-                                icon: "waveform"
+                                title: "Photo Recognition",
+                                status: score.photoRecognitionStatus,
+                                score: score.photoRecognitionScore,
+                                icon: "photo.on.rectangle.angled"
                             )
                             .transition(.move(edge: .leading).combined(with: .opacity))
                         }
@@ -104,11 +104,11 @@ struct DashboardView: View {
                                 )
                             }
                             
-                            NavigationLink(destination: VoiceCheckView()) {
+                            NavigationLink(destination: PhotoRecognitionGameView()) {
                                 HStack(spacing: 8) {
-                                    Image(systemName: "waveform")
+                                    Image(systemName: "photo.on.rectangle.angled")
                                         .font(.system(size: 18, weight: .semibold))
-                                    Text("Voice Check")
+                                    Text("Photo Game")
                                         .font(.system(size: 16, weight: .semibold))
                                 }
                                 .foregroundColor(.white)
@@ -164,7 +164,7 @@ struct DashboardView: View {
             .onChange(of: reactionResults.count) { _, _ in
                 calculateCurrentScore()
             }
-            .onChange(of: voiceMetrics.count) { _, _ in
+            .onChange(of: photoRecognitionResults.count) { _, _ in
                 calculateCurrentScore()
             }
         }
@@ -173,12 +173,12 @@ struct DashboardView: View {
     private func calculateCurrentScore() {
         let latestReaction = reactionResults.first
         let latestSleep = sleepData.first
-        let latestVoice = voiceMetrics.first
+        let latestPhotoRecognition = photoRecognitionResults.first
         
         let newScore = CognitiveScoreService.calculateFromModels(
             reactionTime: latestReaction,
             sleep: latestSleep,
-            voice: latestVoice
+            photoRecognition: latestPhotoRecognition
         )
         
         // Save to database
@@ -279,5 +279,5 @@ struct ActionButton: View {
 
 #Preview {
     DashboardView()
-        .modelContainer(for: [CognitiveScore.self, ReactionTimeResult.self, SleepData.self, VoiceMetrics.self], inMemory: true)
+        .modelContainer(for: [CognitiveScore.self, ReactionTimeResult.self, SleepData.self, PhotoRecognitionResult.self], inMemory: true)
 }

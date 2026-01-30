@@ -16,31 +16,31 @@ final class CognitiveScore {
     var overallScore: Double // 0-100
     var reactionTimeScore: Double // 0-100
     var sleepScore: Double // 0-100
-    var voiceScore: Double // 0-100
+    var photoRecognitionScore: Double // 0-100
     
     // Individual signal statuses
     var reactionTimeStatus: String // "stable", "monitor", "at_risk"
     var sleepStatus: String
-    var voiceStatus: String
+    var photoRecognitionStatus: String
     
     init(
         timestamp: Date = Date(),
         overallScore: Double = 0,
         reactionTimeScore: Double = 0,
         sleepScore: Double = 0,
-        voiceScore: Double = 0,
+        photoRecognitionScore: Double = 0,
         reactionTimeStatus: String = "stable",
         sleepStatus: String = "stable",
-        voiceStatus: String = "stable"
+        photoRecognitionStatus: String = "stable"
     ) {
         self.timestamp = timestamp
         self.overallScore = overallScore
         self.reactionTimeScore = reactionTimeScore
         self.sleepScore = sleepScore
-        self.voiceScore = voiceScore
+        self.photoRecognitionScore = photoRecognitionScore
         self.reactionTimeStatus = reactionTimeStatus
         self.sleepStatus = sleepStatus
-        self.voiceStatus = voiceStatus
+        self.photoRecognitionStatus = photoRecognitionStatus
     }
 }
 
