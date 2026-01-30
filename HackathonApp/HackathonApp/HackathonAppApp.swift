@@ -28,6 +28,11 @@ struct HackathonAppApp: App {
             UserPhoto.self,
             MedicalRecordAnalysis.self,
             ShapeSequenceResult.self,
+            // Coremlgame integrated models (renamed to avoid duplicate symbols)
+            CoremlCognitiveScore.self,
+            CoremlSleepData.self,
+            CoremlReactionTimeResult.self,
+            CoremlPhotoRecognitionResult.self,
         ])
         
         // Use versioned database name to avoid conflicts with old schema
@@ -49,7 +54,16 @@ struct HackathonAppApp: App {
 
     var body: some Scene {
         WindowGroup {
-            DashboardView()
+            TabView {
+                DashboardView()
+                    .tabItem {
+                        Label("Dashboard", systemImage: "house.fill")
+                    }
+                CoremlgameDashboardView()
+                    .tabItem {
+                        Label("Cognitive", systemImage: "brain.head.profile")
+                    }
+            }
         }
         .modelContainer(sharedModelContainer)
     }
