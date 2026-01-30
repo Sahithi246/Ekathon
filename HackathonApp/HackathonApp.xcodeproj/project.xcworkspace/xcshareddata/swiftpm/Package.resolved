@@ -1,6 +1,15 @@
 {
-  "originHash" : "187571e122caef1c3345e074b300606786c517b2399975130436a427f1b2ecea",
+  "originHash" : "36eb9a59df7b3d8b5d2a8cbf1cbfb1e21d024d1b8df9125f38c6e2d678c87997",
   "pins" : [
+    {
+      "identity" : "alamofire",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Alamofire/Alamofire.git",
+      "state" : {
+        "revision" : "7be73f6c2b5cd90e40798b06ebd5da8f9f79cf88",
+        "version" : "5.11.0"
+      }
+    },
     {
       "identity" : "carekit",
       "kind" : "remoteSourceControl",
@@ -8,6 +17,15 @@
       "state" : {
         "revision" : "fd47ce54b5be5389f1cc0e5c1c8ca77e2b7f0f45",
         "version" : "4.0.0"
+      }
+    },
+    {
+      "identity" : "ekamedicalrecordscore",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/eka-care/EkaMedicalRecordsCore.git",
+      "state" : {
+        "revision" : "940d0a68f7330283735d6692be70b8f989a33776",
+        "version" : "1.3.3"
       }
     },
     {

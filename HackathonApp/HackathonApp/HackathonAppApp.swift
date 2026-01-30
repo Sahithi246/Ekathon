@@ -10,6 +10,14 @@ import SwiftData
 
 @main
 struct HackathonAppApp: App {
+    
+    init() {
+        // Eka Care SDK will be initialized when user enters ABHA ID
+        // The API key is stored in EkaCareAuthService
+        print("🚀 CognitiveTrack App Starting...")
+        print("📋 Eka Care API Key configured")
+    }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
@@ -17,6 +25,9 @@ struct HackathonAppApp: App {
             ReactionTimeResult.self,
             SleepData.self,
             PhotoRecognitionResult.self,
+            UserPhoto.self,
+            MedicalRecordAnalysis.self,
+            ShapeSequenceResult.self,
         ])
         
         // Use versioned database name to avoid conflicts with old schema

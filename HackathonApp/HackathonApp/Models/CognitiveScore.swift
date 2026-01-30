@@ -17,11 +17,15 @@ final class CognitiveScore {
     var reactionTimeScore: Double // 0-100
     var sleepScore: Double // 0-100
     var photoRecognitionScore: Double // 0-100
+    var medicalRecordsScore: Double // 0-100
+    var shapeSequenceScore: Double // 0-100
     
     // Individual signal statuses
     var reactionTimeStatus: String // "stable", "monitor", "at_risk"
     var sleepStatus: String
     var photoRecognitionStatus: String
+    var medicalRecordsStatus: String
+    var shapeSequenceStatus: String
     
     init(
         timestamp: Date = Date(),
@@ -29,18 +33,26 @@ final class CognitiveScore {
         reactionTimeScore: Double = 0,
         sleepScore: Double = 0,
         photoRecognitionScore: Double = 0,
+        medicalRecordsScore: Double = 0,
+        shapeSequenceScore: Double = 0,
         reactionTimeStatus: String = "stable",
         sleepStatus: String = "stable",
-        photoRecognitionStatus: String = "stable"
+        photoRecognitionStatus: String = "stable",
+        medicalRecordsStatus: String = "stable",
+        shapeSequenceStatus: String = "stable"
     ) {
         self.timestamp = timestamp
         self.overallScore = overallScore
         self.reactionTimeScore = reactionTimeScore
         self.sleepScore = sleepScore
         self.photoRecognitionScore = photoRecognitionScore
+        self.medicalRecordsScore = medicalRecordsScore
+        self.shapeSequenceScore = shapeSequenceScore
         self.reactionTimeStatus = reactionTimeStatus
         self.sleepStatus = sleepStatus
         self.photoRecognitionStatus = photoRecognitionStatus
+        self.medicalRecordsStatus = medicalRecordsStatus
+        self.shapeSequenceStatus = shapeSequenceStatus
     }
 }
 

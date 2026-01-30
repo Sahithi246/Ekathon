@@ -14,6 +14,7 @@ struct DashboardView: View {
     @Query(sort: \ReactionTimeResult.timestamp, order: .reverse) private var reactionResults: [ReactionTimeResult]
     @Query(sort: \SleepData.date, order: .reverse) private var sleepData: [SleepData]
     @Query(sort: \PhotoRecognitionResult.timestamp, order: .reverse) private var photoRecognitionResults: [PhotoRecognitionResult]
+    @Query(sort: \ShapeSequenceResult.timestamp, order: .reverse) private var shapeSequenceResults: [ShapeSequenceResult]
     
     @State private var currentScore: CognitiveScore?
     @State private var isLoading = false
@@ -71,14 +72,32 @@ struct DashboardView: View {
                                 icon: "photo.on.rectangle.angled"
                             )
                             .transition(.move(edge: .leading).combined(with: .opacity))
+                            
+                            SignalIndicator(
+                                title: "Shape Memory",
+                                status: score.shapeSequenceStatus,
+                                score: score.shapeSequenceScore,
+                                icon: "square.stack.3d.up.fill"
+                            )
+                            .transition(.move(edge: .leading).combined(with: .opacity))
                         }
                     }
                     .padding(.horizontal)
                     .animation(.easeOut(duration: 0.3).delay(0.1), value: currentScore != nil)
                     
+                    // Historical Data Summary
+                    if !allScores.isEmpty {
+                        historicalDataSection
+                    }
+                    
                     // Trend Chart
                     TrendChart(scores: Array(allScores.prefix(7)))
                         .padding(.horizontal)
+                    
+                    // Recent Test Results
+                    if !reactionResults.isEmpty || !photoRecognitionResults.isEmpty || !shapeSequenceResults.isEmpty {
+                        recentTestsSection
+                    }
                     
                     // Quick Actions
                     VStack(spacing: 12) {
@@ -87,28 +106,27 @@ struct DashboardView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
                         
-                        HStack(spacing: 12) {
-                            NavigationLink(destination: ReactionTimeTestView()) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "timer")
-                                        .font(.system(size: 18, weight: .semibold))
-                                    Text("Take Test")
-                                        .font(.system(size: 16, weight: .semibold))
-                                }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(red: 0.12, green: 0.23, blue: 0.37))
-                                )
+                        NavigationLink(destination: CognitiveAssessmentFlowView()) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "brain.head.profile")
+                                    .font(.system(size: 18, weight: .semibold))
+                                Text("Start Assessment")
+                                    .font(.system(size: 16, weight: .semibold))
                             }
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(red: 0.12, green: 0.23, blue: 0.37))
+                            )
+                        }
                             
-                            NavigationLink(destination: PhotoRecognitionGameView()) {
+                            NavigationLink(destination: PhotoSetupView()) {
                                 HStack(spacing: 8) {
-                                    Image(systemName: "photo.on.rectangle.angled")
+                                    Image(systemName: "photo.badge.plus")
                                         .font(.system(size: 18, weight: .semibold))
-                                    Text("Photo Game")
+                                    Text("Setup Photos")
                                         .font(.system(size: 16, weight: .semibold))
                                 }
                                 .foregroundColor(.white)
@@ -167,22 +185,34 @@ struct DashboardView: View {
             .onChange(of: photoRecognitionResults.count) { _, _ in
                 calculateCurrentScore()
             }
-        }
+            .onChange(of: shapeSequenceResults.count) { _, _ in
+                calculateCurrentScore()
+            }
+        
     }
     
     private func calculateCurrentScore() {
         let latestReaction = reactionResults.first
         let latestSleep = sleepData.first
         let latestPhotoRecognition = photoRecognitionResults.first
+        let latestShapeSequence = shapeSequenceResults.first
         
         let newScore = CognitiveScoreService.calculateFromModels(
             reactionTime: latestReaction,
             sleep: latestSleep,
-            photoRecognition: latestPhotoRecognition
+            photoRecognition: latestPhotoRecognition,
+            medicalRecords: nil, // Medical records removed from dashboard
+            shapeSequence: latestShapeSequence
         )
         
-        // Save to database
-        modelContext.insert(newScore)
+        // Only save if we don't already have a score for today
+        let today = Calendar.current.startOfDay(for: Date())
+        let existingTodayScore = allScores.first { Calendar.current.isDate($0.timestamp, inSameDayAs: today) }
+        
+        if existingTodayScore == nil {
+            // Save to database
+            modelContext.insert(newScore)
+        }
         
         // Update current score
         currentScore = newScore
@@ -200,6 +230,123 @@ struct DashboardView: View {
         await fetchHealthKitData()
         calculateCurrentScore()
         isLoading = false
+    }
+    
+    // MARK: - Historical Data Section
+    
+    private var historicalDataSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: "chart.line.uptrend.xyaxis")
+                    .foregroundColor(.blue)
+                Text("Historical Data")
+                    .font(.system(size: 18, weight: .semibold))
+                
+                Spacer()
+                
+                Text("\(allScores.count) assessments")
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+            
+            // Show stats
+            HStack(spacing: 12) {
+                StatCard(
+                    title: "Total Tests",
+                    value: "\(reactionResults.count + photoRecognitionResults.count + shapeSequenceResults.count)",
+                    icon: "checkmark.circle.fill",
+                    color: .green
+                )
+                
+                StatCard(
+                    title: "Days Tracked",
+                    value: "\(uniqueDaysCount)",
+                    icon: "calendar",
+                    color: .blue
+                )
+                
+                StatCard(
+                    title: "Avg Score",
+                    value: String(format: "%.0f", averageScore),
+                    icon: "star.fill",
+                    color: .orange
+                )
+            }
+            .padding(.horizontal)
+        }
+        .padding(.vertical, 16)
+        .background(Color(.systemBackground))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 5)
+        .padding(.horizontal)
+    }
+    
+    // MARK: - Recent Tests Section
+    
+    private var recentTestsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: "clock.arrow.circlepath")
+                    .foregroundColor(.blue)
+                Text("Recent Tests")
+                    .font(.system(size: 18, weight: .semibold))
+            }
+            .padding(.horizontal)
+            
+            VStack(spacing: 8) {
+                if let latestReaction = reactionResults.first {
+                    RecentTestRow(
+                        icon: "timer",
+                        title: "Reaction Time",
+                        score: String(format: "%.0f ms", latestReaction.averageReactionTime),
+                        date: latestReaction.timestamp,
+                        color: .blue
+                    )
+                }
+                
+                if let latestPhoto = photoRecognitionResults.first {
+                    RecentTestRow(
+                        icon: "photo.on.rectangle.angled",
+                        title: "Photo Recognition",
+                        score: "\(latestPhoto.correctAnswers)/\(latestPhoto.totalPhotos)",
+                        date: latestPhoto.timestamp,
+                        color: .orange
+                    )
+                }
+                
+                if let latestShape = shapeSequenceResults.first {
+                    RecentTestRow(
+                        icon: "square.stack.3d.up.fill",
+                        title: "Shape Memory",
+                        score: "\(latestShape.maxSequenceLength) sequences",
+                        date: latestShape.timestamp,
+                        color: .purple
+                    )
+                }
+            }
+            .padding(.horizontal)
+        }
+        .padding(.vertical, 16)
+        .background(Color(.systemBackground))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.05), radius: 5)
+        .padding(.horizontal)
+    }
+    
+    private var uniqueDaysCount: Int {
+        let allDates = Set(
+            reactionResults.map { Calendar.current.startOfDay(for: $0.timestamp) } +
+            photoRecognitionResults.map { Calendar.current.startOfDay(for: $0.timestamp) } +
+            shapeSequenceResults.map { Calendar.current.startOfDay(for: $0.timestamp) }
+        )
+        return allDates.count
+    }
+    
+    private var averageScore: Double {
+        guard !allScores.isEmpty else { return 0 }
+        let sum = allScores.reduce(0.0) { $0 + $1.overallScore }
+        return sum / Double(allScores.count)
     }
     
     private func fetchHealthKitData() {
@@ -273,6 +420,218 @@ struct ActionButton: View {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(color)
             )
+        }
+    }
+}
+
+// MARK: - Supporting Views
+
+struct StatCard: View {
+    let title: String
+    let value: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundColor(color)
+            
+            Text(value)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.primary)
+            
+            Text(title)
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
+    }
+}
+
+struct RecentTestRow: View {
+    let icon: String
+    let title: String
+    let score: String
+    let date: Date
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundColor(color)
+                .frame(width: 30)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.system(size: 15, weight: .semibold))
+                
+                Text(score)
+                    .font(.system(size: 13))
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            Text(timeAgoString(from: date))
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+        }
+        .padding(12)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+    }
+    
+    private func timeAgoString(from date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        if calendar.isDateInToday(date) {
+            return "Today"
+        } else if calendar.isDateInYesterday(date) {
+            return "Yesterday"
+        } else {
+            let days = calendar.dateComponents([.day], from: date, to: now).day ?? 0
+            return "\(days) days ago"
+        }
+    }
+}
+
+// MARK: - Recommendation Views (kept for potential future use)
+
+struct CompactRecommendationCard: View {
+    let recommendation: GameRecommendation
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: iconForGame(recommendation.gameType))
+                    .foregroundColor(.red)
+                    .font(.system(size: 20))
+                
+                Spacer()
+                
+                Text("HIGH")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(Color.red)
+                    .cornerRadius(4)
+            }
+            
+            Text(titleForGame(recommendation.gameType))
+                .font(.system(size: 14, weight: .semibold))
+                .lineLimit(2)
+            
+            Text(recommendation.frequency.displayName)
+                .font(.system(size: 11))
+                .foregroundColor(.secondary)
+        }
+        .padding(12)
+        .frame(width: 140)
+        .background(Color.red.opacity(0.1))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.red.opacity(0.3), lineWidth: 1)
+        )
+    }
+    
+    private func iconForGame(_ game: GameType) -> String {
+        switch game {
+        case .reactionTime:
+            return "timer"
+        case .shapeSequence:
+            return "square.stack.3d.up.fill"
+        case .photoRecognition:
+            return "photo.on.rectangle.angled"
+        }
+    }
+    
+    private func titleForGame(_ game: GameType) -> String {
+        switch game {
+        case .reactionTime:
+            return "Reaction Time"
+        case .shapeSequence:
+            return "Shape Memory"
+        case .photoRecognition:
+            return "Photo Recognition"
+        }
+    }
+}
+
+struct CompactRecommendationRow: View {
+    let recommendation: GameRecommendation
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: iconForGame(recommendation.gameType))
+                .font(.system(size: 20))
+                .foregroundColor(colorForPriority(recommendation.priority))
+                .frame(width: 30)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(titleForGame(recommendation.gameType))
+                        .font(.system(size: 15, weight: .semibold))
+                    
+                    Spacer()
+                    
+                    Text(recommendation.priority.displayName)
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(colorForPriority(recommendation.priority))
+                        .cornerRadius(6)
+                }
+                
+                Text(recommendation.frequency.description)
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(12)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+    }
+    
+    private func iconForGame(_ game: GameType) -> String {
+        switch game {
+        case .reactionTime:
+            return "timer"
+        case .shapeSequence:
+            return "square.stack.3d.up.fill"
+        case .photoRecognition:
+            return "photo.on.rectangle.angled"
+        }
+    }
+    
+    private func titleForGame(_ game: GameType) -> String {
+        switch game {
+        case .reactionTime:
+            return "Reaction Time Test"
+        case .shapeSequence:
+            return "Shape Memory Test"
+        case .photoRecognition:
+            return "Photo Recognition Test"
+        }
+    }
+    
+    private func colorForPriority(_ priority: RecommendationPriority) -> Color {
+        switch priority {
+        case .standard:
+            return .blue
+        case .medium:
+            return .orange
+        case .high:
+            return .red
         }
     }
 }

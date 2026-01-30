@@ -12,6 +12,9 @@ struct ReactionTimeTestView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     
+    var onComplete: ((ReactionTimeResult) -> Void)?
+    var hideNavigationBar = false
+    
     @State private var testState: TestState = .ready
     @State private var reactionTimes: [Double] = []
     @State private var currentTrial = 0
@@ -22,7 +25,7 @@ struct ReactionTimeTestView: View {
     @State private var countdown = 3
     @State private var testStartTime: Date?
     
-    private let numberOfTrials = 10
+    private let numberOfTrials = 3
     private let minWaitTime: TimeInterval = 1.0
     private let maxWaitTime: TimeInterval = 4.0
     
@@ -249,15 +252,20 @@ struct ReactionTimeTestView: View {
             individualReactions: reactionTimes
         )
         
-        modelContext.insert(result)
-        
-        do {
-            try modelContext.save()
-        } catch {
-            print("Error saving reaction time result: \(error)")
+        // Call completion handler if provided (for flow view)
+        if let onComplete = onComplete {
+            onComplete(result)
+        } else {
+            // Save and dismiss normally
+            modelContext.insert(result)
+            
+            do {
+                try modelContext.save()
+                dismiss()
+            } catch {
+                print("Error saving reaction time result: \(error)")
+            }
         }
-        
-        dismiss()
     }
     
     private func cleanupTimers() {

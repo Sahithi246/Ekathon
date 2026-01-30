@@ -10,9 +10,25 @@ import SwiftUI
 struct RiskScoreCard: View {
     let score: Double
     let riskLevel: RiskLevel
+    let title: String?
+    let subtitle: String?
+    
+    init(score: Double, riskLevel: RiskLevel, title: String? = nil, subtitle: String? = nil) {
+        self.score = score
+        self.riskLevel = riskLevel
+        self.title = title
+        self.subtitle = subtitle
+    }
     
     var body: some View {
         VStack(spacing: 12) {
+            // Custom Title (if provided)
+            if let title = title {
+                Text(title)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.primary)
+            }
+            
             // Status Emoji
             Text(riskLevel.emoji)
                 .font(.system(size: 48))
@@ -33,12 +49,21 @@ struct RiskScoreCard: View {
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(riskLevel.color)
             
-            // Description
-            Text(riskLevel.description)
-                .font(.system(size: 14))
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+            // Custom Subtitle (if provided) or default description
+            if let subtitle = subtitle {
+                Text(subtitle)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            } else {
+                // Description
+                Text(riskLevel.description)
+                    .font(.system(size: 14))
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 32)
