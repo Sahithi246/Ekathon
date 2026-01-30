@@ -285,6 +285,10 @@
 				DEVELOPMENT_TEAM = MM7ZJ7865Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your sleep data from Apple Health to calculate your cognitive health score. Your health data remains private and is only used for cognitive assessment.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs permission to update health data in Apple Health.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs access to your microphone to record voice samples for cognitive health analysis. Your voice recordings are analyzed locally and used to assess speech patterns.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to analyze your voice patterns for cognitive health assessment. Your speech data is processed locally.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -318,6 +322,10 @@
 				DEVELOPMENT_TEAM = MM7ZJ7865Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your sleep data from Apple Health to calculate your cognitive health score. Your health data remains private and is only used for cognitive assessment.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs permission to update health data in Apple Health.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs access to your microphone to record voice samples for cognitive health analysis. Your voice recordings are analyzed locally and used to assess speech patterns.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to analyze your voice patterns for cognitive health assessment. Your speech data is processed locally.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
