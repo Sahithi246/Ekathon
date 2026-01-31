@@ -19,6 +19,7 @@ struct CognitiveAssessmentFlowView: View {
     @State private var assessmentState: AssessmentState = .ready
     @State private var results: AssessmentResults = AssessmentResults()
     @State private var showResults = false
+    @State private var showAnalysisView = false
     
     // Game states
     @State private var reactionTimeCompleted = false
@@ -59,6 +60,9 @@ struct CognitiveAssessmentFlowView: View {
         .navigationTitle("Cognitive Assessment")
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(assessmentState == .inProgress)
+        .navigationDestination(isPresented: $showAnalysisView) {
+            AnalysisView()
+        }
     }
     
     // MARK: - Ready View
@@ -273,14 +277,26 @@ struct CognitiveAssessmentFlowView: View {
             }
             .padding(.horizontal, 40)
             
-            Button(action: saveAndDismiss) {
-                Text("View Dashboard")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(Color.blue)
-                    .cornerRadius(12)
+            VStack(spacing: 12) {
+                Button(action: saveAndOpenAnalysis) {
+                    Text("View Analysis")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.orange)
+                        .cornerRadius(12)
+                }
+                
+                Button(action: saveAndDismiss) {
+                    Text("View Dashboard")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 16)
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                }
             }
             .padding(.horizontal, 40)
         }
@@ -345,7 +361,19 @@ struct CognitiveAssessmentFlowView: View {
     }
     
     private func saveAndDismiss() {
-        // Save all results
+        saveAssessmentResults()
+        dismiss()
+    }
+    
+    /// Saves to main app models and syncs to Coreml models so AnalysisView retains all collected data.
+    private func saveAndOpenAnalysis() {
+        saveAssessmentResults()
+        showAnalysisView = true
+    }
+    
+    /// Saves all game results to main app models and syncs to Coreml models for AnalysisView.
+    private func saveAssessmentResults() {
+        // Save main app results
         if let rt = results.reactionTimeResult {
             modelContext.insert(rt)
         }
@@ -356,9 +384,8 @@ struct CognitiveAssessmentFlowView: View {
             modelContext.insert(pr)
         }
         
-        // Calculate and save cognitive score
-        let sleepData: SleepData? = nil // Will be fetched from HealthKit
-        let medicalRecords: MedicalRecordAnalysis? = latestMedicalAnalysis // Use latest analysis if available
+        let sleepData: SleepData? = nil
+        let medicalRecords: MedicalRecordAnalysis? = latestMedicalAnalysis
         
         let cognitiveScore = CognitiveScoreService.calculateFromModels(
             reactionTime: results.reactionTimeResult,
@@ -367,15 +394,60 @@ struct CognitiveAssessmentFlowView: View {
             medicalRecords: medicalRecords,
             shapeSequence: results.shapeSequenceResult
         )
-        
         modelContext.insert(cognitiveScore)
+        
+        // Sync to Coreml models so the Cognitive tab's AnalysisView retains and shows this data
+        syncAssessmentToCoremlModels(
+            reactionTime: results.reactionTimeResult,
+            photoRecognition: results.photoRecognitionResult,
+            cognitiveScore: cognitiveScore
+        )
         
         do {
             try modelContext.save()
-            dismiss()
         } catch {
             print("Error saving assessment results: \(error)")
         }
+    }
+    
+    /// Copies assessment results into Coreml models so AnalysisView can display and retain all collected data.
+    private func syncAssessmentToCoremlModels(
+        reactionTime: ReactionTimeResult?,
+        photoRecognition: PhotoRecognitionResult?,
+        cognitiveScore: CognitiveScore
+    ) {
+        if let rt = reactionTime {
+            let coremlRt = CoremlReactionTimeResult(
+                timestamp: rt.timestamp,
+                averageReactionTime: rt.averageReactionTime,
+                reactionTimes: rt.individualReactions
+            )
+            modelContext.insert(coremlRt)
+        }
+        if let pr = photoRecognition {
+            let totalQuestions = pr.totalPhotos
+            let accuracy = totalQuestions > 0 ? (Double(pr.correctAnswers) / Double(totalQuestions)) * 100.0 : 0
+            let coremlPr = CoremlPhotoRecognitionResult(
+                timestamp: pr.timestamp,
+                accuracy: accuracy,
+                averageResponseTime: pr.averageResponseTime,
+                totalQuestions: totalQuestions,
+                correctAnswers: pr.correctAnswers
+            )
+            modelContext.insert(coremlPr)
+        }
+        let coremlRisk: CoremlRiskLevel
+        switch cognitiveScore.riskLevel {
+        case .low: coremlRisk = .low
+        case .medium: coremlRisk = .medium
+        case .high: coremlRisk = .high
+        }
+        let coremlScore = CoremlCognitiveScore(
+            timestamp: cognitiveScore.timestamp,
+            overallScore: cognitiveScore.overallScore,
+            riskLevel: coremlRisk
+        )
+        modelContext.insert(coremlScore)
     }
 }
 
