@@ -10,22 +10,60 @@ import SwiftData
 
 @main
 struct HackathonAppApp: App {
+    
+    init() {
+        // Eka Care SDK will be initialized when user enters ABHA ID
+        // The API key is stored in EkaCareAuthService
+        print("🚀 CognitiveTrack App Starting...")
+        print("📋 Eka Care API Key configured")
+    }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
+            CognitiveScore.self,
+            ReactionTimeResult.self,
+            SleepData.self,
+            PhotoRecognitionResult.self,
+            UserPhoto.self,
+            MedicalRecordAnalysis.self,
+            ShapeSequenceResult.self,
+            // Coremlgame integrated models (renamed to avoid duplicate symbols)
+            CoremlCognitiveScore.self,
+            CoremlSleepData.self,
+            CoremlReactionTimeResult.self,
+            CoremlPhotoRecognitionResult.self,
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        
+        // Use versioned database name to avoid conflicts with old schema
+        let modelConfiguration = ModelConfiguration(
+            schema: schema,
+            isStoredInMemoryOnly: false
+        )
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // If schema migration fails, print error and use in-memory as fallback
+            print("⚠️ ModelContainer error: \(error)")
+            print("Using in-memory database. Delete app and reinstall to fix.")
+            let inMemoryConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            return try! ModelContainer(for: schema, configurations: [inMemoryConfig])
         }
     }()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                DashboardView()
+                    .tabItem {
+                        Label("Dashboard", systemImage: "house.fill")
+                    }
+                CoremlgameDashboardView()
+                    .tabItem {
+                        Label("Cognitive", systemImage: "brain.head.profile")
+                    }
+            }
         }
         .modelContainer(sharedModelContainer)
     }

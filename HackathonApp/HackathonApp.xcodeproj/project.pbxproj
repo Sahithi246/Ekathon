@@ -14,6 +14,7 @@
 		9E7EC0F52F2B74100079A0C2 /* ResearchKitActiveTask in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0F42F2B74100079A0C2 /* ResearchKitActiveTask */; };
 		9E7EC0F72F2B74100079A0C2 /* ResearchKitSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0F62F2B74100079A0C2 /* ResearchKitSwiftUI */; };
 		9E7EC0F92F2B74100079A0C2 /* ResearchKitUI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC0F82F2B74100079A0C2 /* ResearchKitUI */; };
+		9E7EC2792F2CB0360079A0C2 /* EkaMedicalRecordsCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9E7EC2782F2CB0360079A0C2 /* EkaMedicalRecordsCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E7EC2792F2CB0360079A0C2 /* EkaMedicalRecordsCore in Frameworks */,
 				9E7EC0F72F2B74100079A0C2 /* ResearchKitSwiftUI in Frameworks */,
 				9E7EC0F52F2B74100079A0C2 /* ResearchKitActiveTask in Frameworks */,
 				9E7EC0F92F2B74100079A0C2 /* ResearchKitUI in Frameworks */,
@@ -89,6 +91,7 @@
 				9E7EC0F42F2B74100079A0C2 /* ResearchKitActiveTask */,
 				9E7EC0F62F2B74100079A0C2 /* ResearchKitSwiftUI */,
 				9E7EC0F82F2B74100079A0C2 /* ResearchKitUI */,
+				9E7EC2782F2CB0360079A0C2 /* EkaMedicalRecordsCore */,
 			);
 			productName = HackathonApp;
 			productReference = 9E7EC0D72F2B6BB30079A0C2 /* HackathonApp.app */;
@@ -121,6 +124,7 @@
 			packageReferences = (
 				9E7EC0EA2F2B71EF0079A0C2 /* XCRemoteSwiftPackageReference "CareKit" */,
 				9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */,
+				9E7EC2772F2CB0360079A0C2 /* XCRemoteSwiftPackageReference "EkaMedicalRecordsCore" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9E7EC0D82F2B6BB30079A0C2 /* Products */;
@@ -285,6 +289,10 @@
 				DEVELOPMENT_TEAM = MM7ZJ7865Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your sleep data from Apple Health to calculate your cognitive health score. Your health data remains private and is only used for cognitive assessment.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs permission to update health data in Apple Health.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs access to your microphone to record voice samples for cognitive health analysis. Your voice recordings are analyzed locally and used to assess speech patterns.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to analyze your voice patterns for cognitive health assessment. Your speech data is processed locally.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -318,6 +326,10 @@
 				DEVELOPMENT_TEAM = MM7ZJ7865Z;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your sleep data from Apple Health to calculate your cognitive health score. Your health data remains private and is only used for cognitive assessment.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app needs permission to update health data in Apple Health.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app needs access to your microphone to record voice samples for cognitive health analysis. Your voice recordings are analyzed locally and used to assess speech patterns.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "This app uses speech recognition to analyze your voice patterns for cognitive health assessment. Your speech data is processed locally.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -380,6 +392,14 @@
 				minimumVersion = 3.1.4;
 			};
 		};
+		9E7EC2772F2CB0360079A0C2 /* XCRemoteSwiftPackageReference "EkaMedicalRecordsCore" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/eka-care/EkaMedicalRecordsCore.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -417,6 +437,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 9E7EC0F12F2B74100079A0C2 /* XCRemoteSwiftPackageReference "ResearchKit" */;
 			productName = ResearchKitUI;
+		};
+		9E7EC2782F2CB0360079A0C2 /* EkaMedicalRecordsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E7EC2772F2CB0360079A0C2 /* XCRemoteSwiftPackageReference "EkaMedicalRecordsCore" */;
+			productName = EkaMedicalRecordsCore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
